@@ -10,7 +10,7 @@ class SearchResultsPage(BasePage):
 
     def click_lot_by_index(self, index):
         self.page.locator(self.LOT_ITEMS).nth(index).click()
-        time.sleep(2)
+        
         #Fetching URL of the clicked lot page to verify navigation
         print("Title OF THE CLICKED LOTS PAGE IS: ", self.page.title())
         self.is_title_contains("h0-149742-model-train-passenger-carriage")

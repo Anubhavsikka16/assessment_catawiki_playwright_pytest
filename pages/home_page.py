@@ -24,7 +24,7 @@ class HomePage(BasePage):
     
         self.fill("css", self.SEARCH_BOX, keyword)
         self.click_nth("testid", self.MAGNIFIER_BUTTON, 0)
-        time.sleep(2)
+        
         print("URL OF THE PAGE IS: ", self.page.url)
-        self.wait_for_url(re.compile(r"s\?q=train"))
+        self.wait_for_url(re.compile(r".*s\?q=train"))
         
