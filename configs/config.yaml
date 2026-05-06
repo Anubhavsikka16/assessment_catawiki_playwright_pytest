@@ -1,0 +1,4 @@
+base_url: "https://www.catawiki.com/en/"
+browser: "chromium"
+headless: false
+timeout: 5000

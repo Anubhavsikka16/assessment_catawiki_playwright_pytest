@@ -1,0 +1,64 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Pytest
+.pytest_cache/
+.cache/
+
+# Coverage reports
+htmlcov/
+.coverage
+coverage.xml
+
+# Allure reports
+allure-results/
+allure-report/
+
+# Logs
+logs/
+*.log
+
+# Environment variables
+.env
+.env.*
+
+# Playwright
+playwright-report/
+test-results/
+
+# Selenium screenshots/videos
+screenshots/
+videos/
+
+# Build files
+dist/
+build/
+*.egg-info/
+
+
+# mypy / lint
+.mypy_cache/
+.ruff_cache/
+
+# Node modules (if using Playwright JS tools)
+node_modules/
+
+# Mac/Linux temp files
+*.tmp
+*.bak

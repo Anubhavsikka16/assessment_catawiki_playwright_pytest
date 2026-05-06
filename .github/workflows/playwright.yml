@@ -1,0 +1,64 @@
+name: Python Playwright CI
+
+on:
+  push:
+    branches:
+      - main
+      
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    # =========================
+    # Checkout Code
+    # =========================
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+    # =========================
+    # Setup Python
+    # =========================
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+    # =========================
+    # Install dependencies
+    # =========================
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt allure-pytest
+    # =========================
+    # Install Playwright Browsers
+    # =========================
+      - name: Install Playwright browsers
+        run: python -m playwright install
+
+      - name: Prepare report directories
+        run: mkdir -p reports/allure-results reports/screenshots
+    # =========================
+    # Run Tests
+    # =========================
+      - name: Run tests
+        run: pytest
+    # =========================
+    # Upload Allure Results
+    # =========================       
+      - name: Upload Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: reports/allure-results
+    # =========================
+    # Upload Screenshots
+    # =========================
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: reports/screenshots
