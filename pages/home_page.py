@@ -3,7 +3,7 @@ import time
 import re
 class HomePage(BasePage):
     
-    SEARCH_BOX = ""
+    SEARCH_BOX = "input[data-testid= 'search-field'][id='field_r_2_']"
     MAGNIFIER_BUTTON = "text-field-prefix"  
      
 
