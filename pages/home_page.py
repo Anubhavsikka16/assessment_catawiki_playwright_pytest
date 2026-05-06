@@ -1,18 +1,27 @@
+import keyword
+
 from pages.base_page import BasePage
 import time
 import re
 class HomePage(BasePage):
     
-    SEARCH_BOX = "input[data-testid= 'search-field'][id='field_r_2_']"
+    SEARCH_BOX = "input[data-testid='search-field'][id='field_r_2_']"
     MAGNIFIER_BUTTON = "text-field-prefix"  
      
 
     def search_item(self, keyword):
+        
+        # Wait for page load
+        self.page.wait_for_load_state("domcontentloaded")
+        
+        
         #accepting cookies if popup appears
         try: 
             self.click("text", "Accept All")
         except:
             pass
+        
+    
         self.fill("css", self.SEARCH_BOX, keyword)
         self.click_nth("testid", self.MAGNIFIER_BUTTON, 0)
         time.sleep(2)

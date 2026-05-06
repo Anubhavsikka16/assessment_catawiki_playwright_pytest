@@ -62,3 +62,6 @@ node_modules/
 # Mac/Linux temp files
 *.tmp
 *.bak
+
+# logs
+/logs/
