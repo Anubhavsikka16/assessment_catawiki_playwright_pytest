@@ -36,14 +36,16 @@ jobs:
     # =========================
       - name: Install Playwright browsers
         run: python -m playwright install
-
-      - name: Prepare report directories
-        run: mkdir -p reports/allure-results reports/screenshots
+    # =========================
+    # Clean old artifacts
+    # =========================
+      - name: Clean artifacts
+        run: make clean
     # =========================
     # Run Tests
     # =========================
       - name: Run tests
-        run: pytest
+        run: make test
     # =========================
     # Upload Allure Results
     # =========================       
@@ -61,4 +63,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: screenshots
-          path: reports/screenshots
+          path: screenshots

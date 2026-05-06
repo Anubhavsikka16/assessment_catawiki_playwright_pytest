@@ -32,19 +32,30 @@ def pytest_runtest_makereport(item, call):
 
 
 @pytest.fixture(scope="function")
-def page():
+def page(request):
     with sync_playwright() as p:
         browser = getattr(p, config["browser"]).launch(
             headless=config["headless"]
         )
-
+        test_name = request.node.name
         context = browser.new_context()
+        # =========================
+        # START TRACING
+        # =========================
+        context.tracing.start(
+            screenshots=True,
+            snapshots=True,
+            sources=True
+        )
         page = context.new_page()
 
         # ✅ Auto navigation (THIS is what you wanted)
         page.goto(config["base_url"])
 
         yield page
+        trace_path = f"traces/{test_name}.zip"
+        context.tracing.stop(path=trace_path)
+
 
         context.close()
         browser.close()
