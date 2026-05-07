@@ -17,6 +17,7 @@ class SearchResultsPage(BasePage):
     """Page Object for Desktop Search Results."""
 
     LOT_ITEMS = "div[data-sentry-component='LotList']>div"
+    RELATED_SEARCH_TERMS = ".RelatedSearchTerms_relatedSearchTerms__xDEW_>li"
 
     # ============================================================================
     # RESULTS VERIFICATION
@@ -44,6 +45,48 @@ class SearchResultsPage(BasePage):
 
         except Exception as e:
             logger.error(f"✗ Failed while verifying search results. Error: {str(e)}")
+            raise
+
+    def get_first_result_text(self) -> str:
+        """
+        Retrieve the full text of the first search result item.
+
+        Returns:
+            str: Text content of the first search result item
+        """
+        logger.info("Retrieving text for the first search result item")
+        try:
+            first_result_text = self.get_nth_text("css", self.LOT_ITEMS, 0)
+            logger.info(f"✓ First search result text: {first_result_text}")
+            return first_result_text
+        except Exception as e:
+            logger.error(f"✗ Failed to retrieve first result text. Error: {str(e)}")
+            raise
+
+    def get_related_search_terms(self) -> list:
+        """
+        Fetch related search terms displayed in UI.
+
+        Returns:
+            list: Related search terms shown on search results page
+        """
+        logger.info("Fetching related search terms from UI")
+        try:
+            logger.info("→ Locating related search terms elements")
+            related_terms_locator = self.page.locator("ul[class*='RelatedSearchTerms'] a")
+
+            logger.info("→ Waiting for related search terms to be visible")
+            related_terms_locator.first.wait_for(state="visible", timeout=10000)
+            logger.info("✓ Related search terms elements are visible")
+
+            logger.info("→ Extracting text from all related search terms")
+            ui_terms = related_terms_locator.all_inner_texts() # Lists
+            logger.info(f"✓ Retrieved {len(ui_terms)} related search terms: {ui_terms}")
+
+            return ui_terms
+
+        except Exception as e:
+            logger.error(f"✗ Failed to fetch related search terms from UI. Error: {str(e)}")
             raise
 
     # ============================================================================

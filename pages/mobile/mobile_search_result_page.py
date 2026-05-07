@@ -31,7 +31,7 @@ class SearchResultsPage(BasePage):
         """
         logger.info("Verifying search results are loaded")
         try:
-            logger.info("→ Checking if search result items are loaded")
+            #logger.info("→ Checking if search result items are loaded")
             results_count = self.count("css", self.LOT_ITEMS)
             logger.info(f"✓ Total search results found: {results_count}")
 

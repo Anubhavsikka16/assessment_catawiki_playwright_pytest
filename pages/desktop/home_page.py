@@ -77,3 +77,41 @@ class HomePage(BasePage):
             logger.error(f"✗ Search flow failed for keyword '{keyword}'. Error: {str(e)}")
             logger.info("=" * 60)
             raise
+
+    def get_related_search_terms_from_api(self,keyword: str) -> list:
+        """
+        Fetch related search terms from API response.
+
+        Args:
+        keyword: Search keyword
+
+        Returns:
+        list: Related search terms returned by API
+        """
+
+
+        try:
+            self.click("text", "Accept All")
+
+        except Exception:
+            pass
+
+        with self.page.expect_response(
+            lambda response:
+            "related_terms" in response.url
+            and response.status == 200
+        ) as response_info:
+
+            self.fill("css", self.SEARCH_BOX, keyword)
+
+            logger.info("→ Clicking search magnifier button")
+
+            self.click_nth( "testid",self.MAGNIFIER_BUTTON,0)
+
+        response = response_info.value
+
+        api_terms = response.json()["terms"]
+
+        logger.info(f"API Terms: {api_terms}")
+
+        return api_terms

@@ -8,6 +8,7 @@ Comprehensive test suite for desktop search functionality including:
 - Multi-assertion validation
 """
 
+import json
 import logging
 import allure
 from pages.desktop.home_page import HomePage
@@ -97,3 +98,19 @@ def test_search_and_fetch_lot_details(page) -> None:
         logger.error(f"✗ TEST FAILED | Error: {str(e)}")
         logger.info("=" * 60)
         raise
+
+
+@allure.feature("Search")
+@allure.story("Validate related search terms API and UI consistency")
+def test_related_search_terms_match_ui(page):
+
+    home = HomePage(page)
+    results = SearchResultsPage(page)
+
+    api_terms = home.get_related_search_terms_from_api(
+        "train"
+    )
+
+    ui_terms = results.get_related_search_terms()
+    logger.info(f"→ Validating API terms match UI terms i.e. {api_terms} == {ui_terms}")
+    assert api_terms == ui_terms
