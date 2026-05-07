@@ -66,7 +66,7 @@ class HomePage(BasePage):
             logger.info(f"→ Current page URL: {self.page.url}")
 
             logger.info("→ Verifying search results page opened")
-            self.wait_for_url(re.compile(r".*s\?q=train"))
+            self.wait_for_url(re.compile(r".*s\?q=" + re.escape(keyword)))
             logger.info("✓ Search results page verification successful")
 
             logger.info("=" * 60)

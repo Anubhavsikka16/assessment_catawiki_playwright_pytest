@@ -56,7 +56,6 @@ def test_search_and_fetch_lot_details(page) -> None:
         # ========================================================================
 
         with allure.step("Verify search results loaded"):
-            logger.info("→ Verifying search results are loaded")
             assert results.is_results_loaded(), "Search results failed to load"
             logger.info("✓ Search results verification successful")
 

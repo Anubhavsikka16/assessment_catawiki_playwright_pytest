@@ -32,7 +32,6 @@ class SearchResultsPage(BasePage):
         """
         logger.info("Verifying search results are loaded")
         try:
-            logger.info("→ Checking if search result items are loaded")
             results_count = self.count("css", self.LOT_ITEMS)
             logger.info(f"✓ Total search results found: {results_count}")
 
@@ -72,7 +71,7 @@ class SearchResultsPage(BasePage):
         """
         logger.info("Fetching related search terms from UI")
         try:
-            logger.info("→ Locating related search terms elements")
+            
             related_terms_locator = self.page.locator("ul[class*='RelatedSearchTerms'] a")
 
             logger.info("→ Waiting for related search terms to be visible")
@@ -103,7 +102,7 @@ class SearchResultsPage(BasePage):
         Raises:
             Exception: If lot item cannot be clicked or lot page doesn't load
         """
-        logger.info(f"Opening lot item at index: {index}")
+       
         try:
             logger.info(f"→ Clicking lot item at index {index}")
             self.page.locator(self.LOT_ITEMS).nth(index).click()
