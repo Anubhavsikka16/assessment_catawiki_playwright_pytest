@@ -1,117 +1,146 @@
+"""
+Pytest Configuration and Fixtures
+
+Centralized configuration for Playwright browser setup and test fixtures.
+Provides both desktop and mobile browser contexts with tracing enabled.
+"""
+
+import logging
 import os
-import pytest
 import allure
-
+import pytest
 from playwright.sync_api import sync_playwright
-from utils.config_reader import config
+from utils.loggers import Logger
+
+logger = Logger(__name__, logging.INFO).get_logger()
+
+# ============================================================================
+# MOBILE DEVICE CONFIGURATION
+# ============================================================================
+
+IPHONE_13 = {
+    "viewport": {"width": 390, "height": 844},
+    "user_agent": (
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) "
+        "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 "
+        "Mobile/15E148 Safari/604.1"
+    ),
+    "device_scale_factor": 3,
+    "is_mobile": True,
+    "has_touch": True,
+}
+
+# ============================================================================
+# PLAYWRIGHT SESSION FIXTURE
+# ============================================================================
 
 
-# =========================
-# Create required folders
-# =========================
-os.makedirs("reports/screenshots", exist_ok=True)
-os.makedirs("traces", exist_ok=True)
-
-
-# =========================
-# Hook: Capture screenshots
-# and DOM on failure
-# =========================
-@pytest.hookimpl(hookwrapper=True)
-def pytest_runtest_makereport(item, call):
-
-    outcome = yield
-    rep = outcome.get_result()
-
-    # Store test result for later use
-    setattr(item, "rep_" + rep.when, rep)
-
-    # Capture only test execution failures
-    if rep.when == "call" and rep.failed:
-
-        page = item.funcargs.get("page", None)
-
-        if page:
-
-            screenshot_path = (
-                f"reports/screenshots/{item.name}.png"
-            )
-
-            # Screenshot
-            page.screenshot(
-                path=screenshot_path,
-                full_page=True
-            )
-
-            allure.attach.file(
-                screenshot_path,
-                name="Failure Screenshot",
-                attachment_type=allure.attachment_type.PNG
-            )
-
-            # DOM Snapshot
-            html = page.content()
-
-            allure.attach(
-                html,
-                name="DOM Snapshot",
-                attachment_type=allure.attachment_type.HTML
-            )
-
-
-# =========================
-# Cross-browser fixture
-# =========================
-@pytest.fixture(params=config["browsers"])
-def browser_type(request):
-    return request.param
-
-
-# =========================
-# Main Playwright fixture
-# =========================
-@pytest.fixture(scope="function")
-def page(request, browser_type):
-
+@pytest.fixture(scope="session")
+def playwright():
+    """Initialize Playwright session."""
+    logger.info("✓ Starting Playwright session")
     with sync_playwright() as p:
+        yield p
+    logger.info("✓ Stopping Playwright session")
 
-        # Launch browser dynamically
-        browser = getattr(p, browser_type).launch(
-            headless=config["headless"]
-        )
 
-        test_name = request.node.name
+# ============================================================================
+# BROWSER SESSION FIXTURE
+# ============================================================================
 
-        # Create isolated browser context
-        context = browser.new_context()
 
-        # =========================
-        # Start Playwright tracing
-        # =========================
-        context.tracing.start(
-            screenshots=True,
-            snapshots=True,
-            sources=True
-        )
+@pytest.fixture(scope="session")
+def browser(playwright):
+    """Launch Chromium browser for the session."""
+    logger.info("✓ Launching Chromium browser")
+    browser = playwright.chromium.launch(headless=False)
+    yield browser
+    logger.info("✓ Closing Chromium browser")
+    browser.close()
 
-        # Create page
-        page = context.new_page()
 
-        # Default timeout
-        page.set_default_timeout(config["timeout"])
+# ============================================================================
+# DESKTOP PAGE FIXTURE
+# ============================================================================
 
-        # Navigate to application
-        page.goto(config["base_url"])
 
-        yield page
+@pytest.fixture
+def page(browser):
+    """
+    Create desktop browser context and page.
 
-        # =========================
-        # Save trace after execution
-        # =========================
-        trace_path = f"traces/{test_name}.zip"
+    Features:
+    - Tracing enabled for debugging
+    - Screenshots and snapshots captured
+    - Trace saved to traces/desktop_trace.zip
+    - Attached to Allure report
 
-        context.tracing.stop(path=trace_path)
+    Yields:
+        Page: Playwright page object for desktop
+    """
+    logger.info("→ Creating desktop browser context")
+    context = browser.new_context()
+    context.tracing.start(screenshots=True, snapshots=True, sources=True)
 
-        # Cleanup
-        context.close()
-        browser.close()
+    page = context.new_page()
+    logger.info("→ Opening Catawiki homepage (Desktop)")
+    page.goto("https://www.catawiki.com/en/")
+
+    yield page
+
+    logger.info("→ Closing desktop context and saving trace")
+    os.makedirs("traces", exist_ok=True)
+    trace_path = "traces/desktop_trace.zip"
+    context.tracing.stop(path=trace_path)
+
+    allure.attach.file(
+        trace_path,
+        name="Desktop Trace",
+        attachment_type=allure.attachment_type.ZIP
+    )
+    context.close()
+    logger.info("✓ Desktop context closed")
+
+
+# ============================================================================
+# MOBILE PAGE FIXTURE
+# ============================================================================
+
+
+@pytest.fixture
+def mobile_page(browser):
+    """
+    Create mobile browser context and page with iPhone 13 emulation.
+
+    Features:
+    - iPhone 13 device emulation
+    - Tracing enabled for debugging
+    - Screenshots and snapshots captured
+    - Trace saved to traces/mobile_trace.zip
+    - Attached to Allure report
+
+    Yields:
+        Page: Playwright page object for mobile
+    """
+    logger.info("→ Creating mobile browser context (iPhone 13)")
+    context = browser.new_context(**IPHONE_13)
+    context.tracing.start(screenshots=True, snapshots=True, sources=True)
+
+    page = context.new_page()
+    logger.info("→ Opening Catawiki homepage (Mobile)")
+    page.goto("https://www.catawiki.com/en/")
+
+    yield page
+
+    logger.info("→ Closing mobile context and saving trace")
+    os.makedirs("traces", exist_ok=True)
+    trace_path = "traces/mobile_trace.zip"
+    context.tracing.stop(path=trace_path)
+
+    allure.attach.file(
+        trace_path,
+        name="Mobile Trace",
+        attachment_type=allure.attachment_type.ZIP
+    )
+    context.close()
+    logger.info("✓ Mobile context closed")

@@ -66,6 +66,6 @@ traces:
 # =========================
 run:
 	@make clean
-	-@make testß
+	-@make test
 	@make traces
 	@make report
