@@ -2,15 +2,12 @@
 
 ## Project Overview
 
-This is a comprehensive end-to-end test automation framework for the Catawiki platform, built with **Playwright** and **Python**. The suite validates search functionality, go to search result page and click on the second element on the page and fetches current bid, title and favourites.
+This is a comprehensive end-to-end test automation framework for the Catawiki platform, built with **Playwright** and **Python**. 
 
 ## Add ons
 
--Mobile emulation added on iPhone 13 device
--It checks API response for the search keyword 'train' and matches with Frontend display under 'Related Search Items'
-
-- It supports Allure reporting, screenshots attached on failure
-
+-Mobile emulation added to check 'Search Scenario' on mobile emulator.
+-Checks API response for the search keyword 'train' and matches with Frontend display under 'Related Search Items'
 
 
 ## What It Tests
@@ -21,14 +18,6 @@ This is a comprehensive end-to-end test automation framework for the Catawiki pl
 - **Lot Details**: Extract and validate lot information (name, bid, favorites)
 - **API Request/Response Capture**: Intercept network calls and validate response data
 - **UI-API Consistency**: Verify that frontend elements match API response values
-- **Related Search Terms**: Validate that suggested search terms in the UI match API response data
-
-### Test Coverage
-- Search with keywords (e.g., "train")
-- Special character searches (e.g., "##@@")
-- Related search term validation
-- Multi-lot navigation
-- Data extraction and assertion
 
 ## Project Structure
 
@@ -75,22 +64,12 @@ assessment_catawiki_playwright/
 
 ### 3. **Comprehensive Logging**
 - Centralized logger with file and console output
-- Structured logging with status indicators (✓, ✗, →)
-- Separate log files per execution date
+- Stored under 'Logs' folder
 
 ### 4. **Allure Reporting**
 - Rich test reports with steps and attachments
 - Failure analysis and trend tracking
-- Visual HTML reports with interactive features
 
-### 5. **Configuration Management**
-- YAML-based configuration for dynamic test parameters
-- Supports multiple environments
-
-### 6. **Cross-Platform Testing**
-- Desktop browser automation
-- Mobile viewport testing
-- Responsive design validation
 
 ## Setup Instructions
 
@@ -154,6 +133,12 @@ pytest tests/test_search_lot.py -v -s
 pytest tests/test_mobile_search.py -v -s
 ```
 
+### Best Way
+```bash 
+    make run ## to run all 3 test files and generate/open allure reports
+    make test ## run all 3 tests without allure reports
+```
+
 ## Test Execution Examples
 
 ### Test 1: Desktop Search Flow
@@ -165,6 +150,15 @@ test_search_and_fetch_lot_details
 - Opens the second lot
 - Extracts lot details (name, bid, favorites)
 - Validates data is not empty
+
+Console Output: 
+============================================================
+LOT DETAILS
+============================================================
+Name:      Ade H0 - Model train passenger carriage (1) - Personenwagen - Apfelpfeil
+Favorites: 6
+Bid:       € 7
+============================================================
 
 ### Test 2: API Request/Response Capture
 ```python
@@ -207,8 +201,6 @@ viewport:
 
 Logs are automatically generated in the `logs/` directory with timestamps:
 - `log_YYYY-MM-DD.txt` - Daily log files
-- Console output with color-coded status indicators
-- Comprehensive error messages and stack traces
 
 ## Reports
 
@@ -223,6 +215,8 @@ allure open allure-report
 - Playwright traces saved in `traces/` directory
 - Screenshots captured on failures
 - Detailed execution history
+- Command: npx playwright show-trace traces/desktop_trace.zip
+
 
 ## Dependencies
 
@@ -233,17 +227,6 @@ Key packages used:
 - **pyyaml**: Configuration management
 
 See `requirements.txt` for complete list.
-
-## Common Issues & Solutions
-
-### Issue: Tests fail with "Element not found"
-**Solution**: Check page load time and adjust timeout in `config.yaml` or use `wait_for_visible()` before interaction.
-
-### Issue: Trace files grow too large
-**Solution**: Clear `traces/` directory periodically and adjust trace recording settings.
-
-### Issue: Mobile tests fail on desktop viewport
-**Solution**: Ensure fixtures in `conftest.py` are using correct device context.
 
 ## Development Guidelines
 
@@ -258,51 +241,3 @@ See `requirements.txt` for complete list.
 2. Define locators as class constants
 3. Implement methods for page interactions
 4. Use centralized logger for consistency
-
-### Best Practices
-- Use descriptive test names
-- Keep tests focused on single functionality
-- Leverage page objects to avoid code duplication
-- Add meaningful assertions with clear error messages
-- Use Allure steps to structure test flow
-
-## Useful Commands
-
-```bash
-# Run tests with headless mode disabled (see browser)
-pytest tests/ -v -s --headed
-
-# Run tests with specific marker
-pytest tests/ -m "smoke" -v
-
-# Run tests and generate coverage report
-pytest tests/ --cov=pages --cov-report=html
-
-# Lint Python code
-pylint pages/ tests/ utils/
-
-# Format code
-black pages/ tests/ utils/
-```
-
-## Contributing
-
-When contributing:
-1. Follow PEP 8 style guidelines
-2. Add docstrings to new methods
-3. Use type hints where applicable
-4. Update tests for new features
-5. Document changes in README
-
-## Support
-
-For issues or questions, review:
-- Test logs in `logs/` directory
-- Allure reports for failure details
-- Playwright traces for visual debugging
-
----
-
-**Last Updated**: May 7, 2026  
-**Framework**: Playwright + Pytest  
-**Target Platform**: Catawiki.com

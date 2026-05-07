@@ -7,8 +7,6 @@ Comprehensive test suite for desktop search functionality including:
 - Lot details extraction
 - Multi-assertion validation
 """
-
-import json
 import logging
 import allure
 from pages.desktop.home_page import HomePage

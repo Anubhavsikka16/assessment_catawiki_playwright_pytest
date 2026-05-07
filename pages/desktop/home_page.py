@@ -95,13 +95,12 @@ class HomePage(BasePage):
 
         except Exception:
             pass
-
         with self.page.expect_response(
             lambda response:
             "related_terms" in response.url
             and response.status == 200
         ) as response_info:
-
+        
             self.fill("css", self.SEARCH_BOX, keyword)
 
             logger.info("→ Clicking search magnifier button")
@@ -109,6 +108,10 @@ class HomePage(BasePage):
             self.click_nth( "testid",self.MAGNIFIER_BUTTON,0)
 
         response = response_info.value
+        print(f"API Response URL: {response.url}")
+        logger.info(f"API Response URL: {response.url}")
+        logger.info(f"→ Response status: {response.status}")
+        
 
         api_terms = response.json()["terms"]
 
