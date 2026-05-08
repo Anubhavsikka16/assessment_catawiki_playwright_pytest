@@ -39,28 +39,13 @@ class SearchResultsPage(BasePage):
                 logger.info("✓ Search results loaded successfully")
                 return True
 
-            logger.warning("⚠ No search results found")
+            logger.warning("No search results found")
             return False
 
         except Exception as e:
             logger.error(f"✗ Failed while verifying search results. Error: {str(e)}")
             raise
 
-    def get_first_result_text(self) -> str:
-        """
-        Retrieve the full text of the first search result item.
-
-        Returns:
-            str: Text content of the first search result item
-        """
-        logger.info("Retrieving text for the first search result item")
-        try:
-            first_result_text = self.get_nth_text("css", self.LOT_ITEMS, 0)
-            logger.info(f"✓ First search result text: {first_result_text}")
-            return first_result_text
-        except Exception as e:
-            logger.error(f"✗ Failed to retrieve first result text. Error: {str(e)}")
-            raise
 
     def get_related_search_terms(self) -> list:
         """
@@ -108,7 +93,7 @@ class SearchResultsPage(BasePage):
             self.page.locator(self.LOT_ITEMS).nth(index).click()
             logger.info("✓ Lot item clicked successfully")
 
-            logger.info(f"→ Verifying lot page URL: {self.page.url}")
+            logger.info(f"→ Verifying lot page URL: {self.page.url} contains '/l/'")
             self.wait_for_url(re.compile(r".*/l/.*"))
             logger.info("✓ Lot page opened and navigated successfully")
 

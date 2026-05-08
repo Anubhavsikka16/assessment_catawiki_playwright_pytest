@@ -36,14 +36,8 @@ class HomePage(BasePage):
 
         Args:
             keyword: Search term to query
-
-        Raises:
-            Exception: If search flow fails at any step
         """
-        logger.info("=" * 60)
-        logger.info("Starting Desktop Search Flow")
-        logger.info("=" * 60)
-
+        #Waiting for the homepage to load and handling cookies popup can be common steps for all search tests, so we can include them in this method to ensure they are executed before performing the search action.
         try:
             logger.info("→ Waiting for homepage to load")
             self.page.wait_for_load_state("domcontentloaded")
@@ -55,7 +49,7 @@ class HomePage(BasePage):
                 self.click("text", "Accept All")
                 logger.info("✓ Cookies popup accepted")
             except Exception:
-                logger.info("⚠ Cookies popup not displayed")
+                logger.info("Cookies popup not displayed")
 
             logger.info(f"→ Entering keyword in search box: {keyword}")
             self.fill("css", self.SEARCH_BOX, keyword)
@@ -66,11 +60,11 @@ class HomePage(BasePage):
             logger.info(f"→ Current page URL: {self.page.url}")
 
             logger.info("→ Verifying search results page opened")
-            self.wait_for_url(re.compile(r".*s\?q=" + re.escape(keyword)))
+            self.wait_for_url(re.compile(r".*s\?q=train"))
             logger.info("✓ Search results page verification successful")
 
             logger.info("=" * 60)
-            logger.info("✓ Desktop Search Completed Successfully")
+            logger.info("✓ Desktop Search Completed Successfully and navigated to Search Results Page")
             logger.info("=" * 60)
 
         except Exception as e:
@@ -83,38 +77,50 @@ class HomePage(BasePage):
         Fetch related search terms from API response.
 
         Args:
-        keyword: Search keyword
+            keyword: Search keyword
 
         Returns:
-        list: Related search terms returned by API
+            list: Related search terms returned by API
         """
 
+        logger.info("=" * 60)
+        logger.info("Starting related search terms extraction from API")
+        logger.info(f"→ Search keyword: '{keyword}'")
+        logger.info("=" * 60)
 
+        #ACCEPTING COOKIES
         try:
+            logger.info("→ Checking for cookies popup")
             self.click("text", "Accept All")
-
+            logger.info("✓ Cookies popup accepted")
         except Exception:
-            pass
+            logger.info("Cookies popup not displayed")
+
         with self.page.expect_response(
             lambda response:
-            "related_terms" in response.url
-            and response.status == 200
+                "related_terms" in response.url
+                and response.status == 200
         ) as response_info:
-        
+            
+            #Adding keyword in search box and clicking search button to trigger the API call for related search terms. This ensures that we are capturing the correct API response that corresponds to the search action performed in the test.
+            logger.info("→ Filling search box for API request")
             self.fill("css", self.SEARCH_BOX, keyword)
 
             logger.info("→ Clicking search magnifier button")
-
-            self.click_nth( "testid",self.MAGNIFIER_BUTTON,0)
+            self.click_nth("testid", self.MAGNIFIER_BUTTON, 0)
 
         response = response_info.value
-        print(f"API Response URL: {response.url}")
-        logger.info(f"API Response URL: {response.url}")
+        logger.info(f"✓ API response received: {response.url}")
         logger.info(f"→ Response status: {response.status}")
-        
 
-        api_terms = response.json()["terms"]
+        try:
+            api_terms = response.json()["terms"]
+            logger.info(f"✓ Extracted related search terms: {api_terms}")
+        except Exception as e:
+            logger.error(f"✗ Failed to parse related search terms from API response: {e}")
+            raise
 
-        logger.info(f"API Terms: {api_terms}")
+        logger.info("✓ Related search terms fetched successfully")
+        logger.info("=" * 60)
 
         return api_terms

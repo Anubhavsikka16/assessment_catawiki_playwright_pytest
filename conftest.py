@@ -79,7 +79,7 @@ def page(browser):
         Page: Playwright page object for desktop
     """
     logger.info("→ Creating desktop browser context")
-    context = browser.new_context()
+    context = browser.new_context(record_video_dir="videos/desktop")
     context.tracing.start(screenshots=True, snapshots=True, sources=True)
 
     page = context.new_page()
@@ -123,7 +123,7 @@ def mobile_page(browser):
         Page: Playwright page object for mobile
     """
     logger.info("→ Creating mobile browser context (iPhone 13)")
-    context = browser.new_context(**IPHONE_13)
+    context = browser.new_context(**IPHONE_13, record_video_dir="videos/mobile")
     context.tracing.start(screenshots=True, snapshots=True, sources=True)
 
     page = context.new_page()

@@ -66,7 +66,7 @@ class LotPage(BasePage):
             print(f"Favorites: {favorites}")
             print(f"Bid:       {current_bid}")
             print("=" * 60 + "\n")
-
+            #for assertions or reuse
             return {"name": lot_name, "favorites": favorites, "bid": current_bid}
 
         except Exception as e:

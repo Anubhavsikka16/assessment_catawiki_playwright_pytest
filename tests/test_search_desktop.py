@@ -100,6 +100,11 @@ def test_search_and_fetch_lot_details(page) -> None:
 @allure.feature("Search")
 @allure.story("Validate related search terms API and UI consistency")
 def test_related_search_terms_match_ui(page):
+    
+    logger.info("=" * 60)
+    logger.info("TEST STARTED | Backend API and UI consistency for related search terms")
+    logger.info("=" * 60)
+
 
     home = HomePage(page)
     results = SearchResultsPage(page)

@@ -4,6 +4,8 @@
 
 This is a comprehensive end-to-end test automation framework for the Catawiki platform, built with **Playwright** and **Python**. 
 
+This README and parts of the implementation were assisted by AI using the **Raptor mini (Preview)** model.
+
 ## Add ons
 
 -Mobile emulation added to check 'Search Scenario' on mobile emulator.
@@ -211,8 +213,9 @@ allure generate --clean -o allure-report allure-results
 allure open allure-report
 ```
 
-### Traces and Screenshots
+### Traces and Videos
 - Playwright traces saved in `traces/` directory
+- Playwright videos saved in `videos/desktop` and `videos/mobile` directory
 - Screenshots captured on failures
 - Detailed execution history
 - Command: npx playwright show-trace traces/desktop_trace.zip

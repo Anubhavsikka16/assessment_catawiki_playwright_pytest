@@ -40,10 +40,7 @@ class MobileHomePage(BasePage):
         Raises:
             Exception: If search flow fails at any step
         """
-        logger.info("=" * 60)
-        logger.info("Starting Mobile Search Flow")
-        logger.info("=" * 60)
-
+        
         try:
             logger.info("→ Waiting for homepage to load")
             self.page.wait_for_load_state("domcontentloaded")
