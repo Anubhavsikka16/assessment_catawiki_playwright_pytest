@@ -69,8 +69,8 @@ assessment_catawiki_playwright/
 - Stored under 'Logs' folder
 
 ### 4. **Allure Reporting**
-- Rich test reports with steps and attachments
-- Failure analysis and trend tracking
+- Rich test reports with steps, attachments and videos
+- Screenshot on failure
 
 
 ## Setup Instructions
@@ -104,6 +104,12 @@ assessment_catawiki_playwright/
 
 ## Running Tests
 
+### Best Way
+```bash 
+    make run ## to run all 3 test files and generate/open allure reports
+    make test ## run all 3 tests without allure reports
+```
+
 ### Run All Tests
 ```bash
 pytest tests/ -v -s
@@ -135,11 +141,7 @@ pytest tests/test_search_lot.py -v -s
 pytest tests/test_mobile_search.py -v -s
 ```
 
-### Best Way
-```bash 
-    make run ## to run all 3 test files and generate/open allure reports
-    make test ## run all 3 tests without allure reports
-```
+
 
 ## Test Execution Examples
 
